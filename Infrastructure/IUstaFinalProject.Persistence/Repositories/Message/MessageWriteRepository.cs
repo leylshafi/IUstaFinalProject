@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace IUstaFinalProject.Persistence.Repositories
 {
-    public class MessageWriteRepository : ReadRepository<Message>, IMessageWriteRepository
+    public class MessageWriteRepository : WriteRepository<Message>, IMessageWriteRepository
     {
         public MessageWriteRepository(AppDbContext context) : base(context)
         {
