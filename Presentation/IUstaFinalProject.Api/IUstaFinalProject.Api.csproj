@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.7.1" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.11">
       <PrivateAssets>all</PrivateAssets>
@@ -16,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\IUstaFinalProject.Infrastructure\IUstaFinalProject.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Infrastructure\IUstaFinalProject.Persistence\IUstaFinalProject.Persistence.csproj" />
     <ProjectReference Include="..\..\IUstaFinalProject.Application\IUstaFinalProject.Application.csproj" />
   </ItemGroup>

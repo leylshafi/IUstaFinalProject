@@ -1,3 +1,6 @@
+using FluentValidation.AspNetCore;
+using IUstaFinalProject.Application.Validators.Agreements;
+using IUstaFinalProject.Infrastructure.Filters;
 using IUstaFinalProject.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +11,9 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
 
 // Add services to the container.
 builder.Services.AddPersistenceService();
-builder.Services.AddControllers();
+builder.Services.AddControllers(options=>options.Filters.Add<ValidationFilter>())
+    .AddFluentValidation(config=>config.RegisterValidatorsFromAssemblyContaining<AgreementDtoValidator>())
+    .ConfigureApiBehaviorOptions(o=>o.SuppressModelStateInvalidFilter=true);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
