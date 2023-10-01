@@ -1,8 +1,11 @@
-﻿using IUstaFinalProject.Application.Repositories;
+﻿using IUstaFinalProject.Application.Abstraction.Services;
+using IUstaFinalProject.Application.Repositories;
 using IUstaFinalProject.Domain.Entities.Identity;
 using IUstaFinalProject.Persistence.Contexts;
 using IUstaFinalProject.Persistence.Repositories;
+using IUstaFinalProject.Persistence.Services;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +26,7 @@ namespace IUstaFinalProject.Persistence
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.ConnectionString,
                 op => options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)), ServiceLifetime.Transient);
             services.AddIdentity<AppUser, AppRole>()
-                .AddEntityFrameworkStores<AppDbContext>();
+                .AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
 
             services.AddScoped<IAgreementReadRepository, AgreementReadRepository>();
@@ -44,6 +47,9 @@ namespace IUstaFinalProject.Persistence
             services.AddScoped<IReviewReadRepository, ReviewReadRepository>();
             services.AddScoped<IReviewWriteRepository, ReviewWriteRepository>();
 
+
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthService, AuthService>();
 
         }
     }

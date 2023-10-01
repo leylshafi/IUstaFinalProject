@@ -33,7 +33,8 @@ namespace IUstaFinalProject.Application.Features.Commands.AppUser.LoginUser
             SignInResult result = await signInManager.CheckPasswordSignInAsync(appUser, request.Password, false);
             if (result.Succeeded)
             {
-                Token token = tokenHandler.CreateAccessToken(5);
+                Token token = tokenHandler.CreateAccessToken(5,appUser);
+                
                 return new LoginUserSuccessCommandResponse()
                 {
                     Token = token,
