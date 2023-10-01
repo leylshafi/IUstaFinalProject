@@ -16,5 +16,6 @@ namespace IUstaFinalProject.Application.Repositories
         Task<bool> RemoveAsync(string id);
         bool Update(T model);
         Task<int> SaveAsync();
+
     }
 }
