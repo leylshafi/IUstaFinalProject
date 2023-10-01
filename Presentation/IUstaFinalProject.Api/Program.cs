@@ -1,15 +1,18 @@
 using FluentValidation.AspNetCore;
 using IUstaFinalProject.Application;
 using IUstaFinalProject.Application.Validators.Agreements;
+using IUstaFinalProject.Domain.Entities.Identity;
 using IUstaFinalProject.Infrastructure;
 using IUstaFinalProject.Infrastructure.Filters;
 using IUstaFinalProject.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Context;
 using Serilog.Core;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 
@@ -18,6 +21,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddPersistenceService();
+
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
  policy.WithOrigins("https://localhost:7176", "http://localhost:7176").AllowAnyHeader().AllowAnyMethod()
@@ -52,6 +56,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecurityKey"])),
             LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false
         };
+    }).AddJwtBearer("Worker", options =>
+    {
+        options.TokenValidationParameters = new()
+        {
+            ValidateAudience = true,
+            ValidateIssuer = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidAudience = builder.Configuration["JWT:Audience"],
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecurityKey"])),
+            LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false
+        };
     });
 var app = builder.Build();
 
@@ -69,6 +87,40 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+//var container = app.Services.CreateScope();
+//var userManager = container.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+//var roleManager = container.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+//if (!await roleManager.RoleExistsAsync("Admin"))
+//{
+//    var result = await roleManager.CreateAsync(new IdentityRole("Admin"));
+//}
+
+//var user = await userManager.FindByEmailAsync("admin@admin.com");
+//if (user is null)
+//{
+//    user = new AppUser
+//    {
+//        NameSurname="admin admin",
+//        UserName = "admin@admin.com",
+//        Email = "admin@admin.com"
+//    };
+//    var result = await userManager.CreateAsync(user, "Admin");
+//    result = await userManager.AddToRoleAsync(user, "Admin");
+//}
+
+//using (var scope = app.Services.CreateScope())
+//{
+//    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+//    var roles = new[] { "Admin", "Worker", "Customer" };
+//    foreach (var role in roles)
+//    {
+//        if (!await roleManager.RoleExistsAsync(role))
+//            await roleManager.CreateAsync(new IdentityRole(role));
+
+//    }
+
+//}
 
 app.Run();
 
