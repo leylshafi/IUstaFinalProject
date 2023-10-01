@@ -1,4 +1,6 @@
-﻿using IUstaFinalProject.Application.Abstraction.Token;
+﻿using IUstaFinalProject.Application.Abstraction.Services;
+using IUstaFinalProject.Application.Abstraction.Token;
+using IUstaFinalProject.Infrastructure.Services;
 using IUstaFinalProject.Infrastructure.Services.Token;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -14,6 +16,7 @@ namespace IUstaFinalProject.Infrastructure
         public static void AddInfrastructureServices(this IServiceCollection collection)
         {
             collection.AddScoped<ITokenHandler,TokenHandler>();
+            collection.AddScoped<IMailService,MailService>();
         }
     }
 }

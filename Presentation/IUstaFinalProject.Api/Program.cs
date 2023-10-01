@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using Serilog.Context;
 using Serilog.Core;
 using System.Text;
 
@@ -24,7 +25,8 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
 
 Logger log = new LoggerConfiguration()
     .WriteTo.Console()
-    .WriteTo.MSSqlServer(builder.Configuration.GetConnectionString("Default"),"logs")
+    .WriteTo.MSSqlServer(builder.Configuration.GetConnectionString("Default"),"logs").Enrich.FromLogContext()
+    .MinimumLevel.Information()
     .CreateLogger();
 
 builder.Host.UseSerilog(log);

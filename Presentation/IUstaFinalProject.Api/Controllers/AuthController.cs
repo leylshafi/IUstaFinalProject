@@ -1,4 +1,5 @@
-﻿using IUstaFinalProject.Application.Features.Commands.AppUser.LoginUser;
+﻿using IUstaFinalProject.Application.Abstraction.Services;
+using IUstaFinalProject.Application.Features.Commands.AppUser.LoginUser;
 using IUstaFinalProject.Application.Features.Commands.AppUser.RefreshTokenLogin;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -11,14 +12,20 @@ namespace IUstaFinalProject.Api.Controllers
     public class AuthController : ControllerBase
     {
         readonly IMediator _mediator;
-        public AuthController(IMediator mediator)
+        readonly IMailService mailService;
+        readonly ILogger<AuthController> _logger;
+        public AuthController(IMediator mediator, IMailService mailService, ILogger<AuthController> logger)
         {
             _mediator = mediator;
+            this.mailService = mailService;
+            _logger = logger;
         }
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginUserCommandRequest loginUserCommandRequest)
         {
             LoginUserCommandResponse response = await _mediator.Send(loginUserCommandRequest);
+            await mailService.SendMailAsync("llshafi03@gmail.com", "Test", "<h1>This is a test mail</h1>");
+            _logger.LogInformation("Email Sent");
             return Ok(response);
         }
 
