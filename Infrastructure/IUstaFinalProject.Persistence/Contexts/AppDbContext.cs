@@ -1,5 +1,7 @@
 ﻿using IUstaFinalProject.Domain.Entities;
 using IUstaFinalProject.Domain.Entities.Common;
+using IUstaFinalProject.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace IUstaFinalProject.Persistence.Contexts
 {
-    public class AppDbContext:DbContext
+    public class AppDbContext: IdentityDbContext<AppUser,AppRole,string>
     {
         public AppDbContext(DbContextOptions options) : base(options)
         {

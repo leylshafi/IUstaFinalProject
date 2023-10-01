@@ -1,12 +1,15 @@
 ﻿using IUstaFinalProject.Application.Repositories;
+using IUstaFinalProject.Domain.Entities.Identity;
 using IUstaFinalProject.Persistence.Contexts;
 using IUstaFinalProject.Persistence.Repositories;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,6 +22,8 @@ namespace IUstaFinalProject.Persistence
         {
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.ConnectionString,
                 op => options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)), ServiceLifetime.Transient);
+            services.AddIdentity<AppUser, AppRole>()
+                .AddEntityFrameworkStores<AppDbContext>();
 
 
             services.AddScoped<IAgreementReadRepository, AgreementReadRepository>();
