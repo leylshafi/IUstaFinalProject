@@ -12,6 +12,7 @@ namespace IUstaFinalProject.Domain.Entities
         public string Name { get; set; } = string.Empty;
         public string Surname { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
+        public string Role { get; set; }
         public byte[] PassHash { get; set; }
         public byte[] PassSalt { get; set; } 
     }

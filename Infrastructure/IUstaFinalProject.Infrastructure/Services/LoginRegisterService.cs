@@ -11,6 +11,7 @@ using Azure.Core;
 using MediatR;
 using IUstaFinalProject.Domain.Entities.Identity;
 using IUstaFinalProject.Application.Enums;
+using System.Net.Http.Headers;
 
 namespace IUstaFinalProject.Infrastructure.Services
 {
@@ -21,7 +22,7 @@ namespace IUstaFinalProject.Infrastructure.Services
         {
             this._context = context;
         }
-        public async Task<string> Login(UserDto request,Role role)
+        public async Task<string> Login(UserDto request, Role role)
         {
             var user = _context.Customers.FirstOrDefault(u => u.Username == request.UserName) ??
                 throw new Exception("Username or password is wrong!");
@@ -40,22 +41,58 @@ namespace IUstaFinalProject.Infrastructure.Services
             return token;
         }
 
-        public async Task<bool> Register(UserDto request,Role role)
-        {
-            if (_context.Customers.Any(u => u.Username == request.UserName))
-                throw new Exception($"{request.UserName} user is already created!");
 
+        public async Task<bool> Register(RegisterDto request, Role role, string? categoryId)
+        {
             PasswordHash.Create(request.Password, out byte[] PassHash, out byte[] PassSalt);
 
-            Customer customer = new()
+            if (role == Role.Customer)
             {
-                Username = request.UserName,
-                PassHash = PassHash,
-                PassSalt = PassSalt,
-            };
+                if (_context.Customers.Any(u => u.Username == request.UserName))
+                    throw new Exception($"{request.UserName} user is already created!");
+                Customer customer = new()
+                {
+                    Id = Guid.NewGuid(),
+                    Username = request.UserName,
+                    PassHash = PassHash,
+                    PassSalt = PassSalt,
+                    Name = request.Name,
+                    Surname = request.Surname,
+                    Role = role.ToString()
+                };
 
-            await _context.Customers.AddAsync(customer);
-            await _context.SaveChangesAsync();
+                await _context.Customers.AddAsync(customer);
+            }
+            else
+            {
+
+                if (_context.Workers.Any(u => u.Username == request.UserName))
+                    throw new Exception($"{request.UserName} user is already created!");
+
+                Worker worker = new()
+                {
+                    Id = Guid.NewGuid(),
+                    Username = request.UserName,
+                    PassHash = PassHash,
+                    PassSalt = PassSalt,
+                    Name = request.Name,
+                    Surname = request.Surname,
+                    CategoryId = Guid.Parse(categoryId),
+                    Role = role.ToString()
+                };
+                await _context.Workers.AddAsync(worker);
+
+            }
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.InnerException.ToString());
+                throw;
+            }
+            
             return true;
         }
     }

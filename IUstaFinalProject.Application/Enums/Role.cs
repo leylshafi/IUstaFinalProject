@@ -16,6 +16,11 @@ namespace IUstaFinalProject.Application.Enums
         /// <summary>
         /// Customer.
         /// </summary>
-        Customer = 1
+        Customer = 1,
+        /// <summary>
+        /// Admin.
+        /// </summary>
+        Admin =2
+
     }
 }

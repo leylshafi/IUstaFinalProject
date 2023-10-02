@@ -5,6 +5,7 @@ using IUstaFinalProject.Domain.Entities.Dtos;
 using IUstaFinalProject.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Net;
 
 namespace IUstaFinalProject.Api.Controllers
@@ -22,11 +23,11 @@ namespace IUstaFinalProject.Api.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] CustomerDto customer,Role role)
+        public IActionResult Login([FromBody] CustomerDto customer)
         {
             try
             {
-                var token = _loginRegister.Login(customer,role);
+                var token = _loginRegister.Login(customer,Role.Customer);
                 return Ok(token);
             }
             catch (Exception ex)
@@ -37,11 +38,11 @@ namespace IUstaFinalProject.Api.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] CustomerDto customer,Role role)
+        public async Task<IActionResult> Register([FromBody] RegisterDto customer)
         {
             try
             {
-                if (await _loginRegister.Register(customer,role))
+                if (await _loginRegister.Register(customer,Role.Customer,null))
                     return Ok();
                 throw new Exception("Something went wrong!");
             }
@@ -75,23 +76,47 @@ namespace IUstaFinalProject.Api.Controllers
             }
         }
 
-        [HttpGet("GetWorkerbyCategory")]
-        public async Task<IActionResult> GetWorkerByProfession([FromBody] CategoryDto category)
+        [HttpGet("GetWorkerbyCategory/{category}")]
+        public async Task<IActionResult> GetWorkerByProfession(string category)
         {
             try
             {
-                Worker worker = await unit.WorkerReadRepository.GetSingleAsync(u => u.Category.CategoryName == category.CategoryName);
-                if (worker is not null)
-                    return Ok(worker);
+                Category categoryFind = await unit.CategoryReadRepository.GetSingleAsync(c => c.CategoryName == category);
+
+                if (categoryFind != null)
+                {
+                    Worker worker = await unit.WorkerReadRepository.GetSingleAsync(u => u.CategoryId == categoryFind.Id);
+
+                    if (worker != null)
+                        return Ok(worker);
+                    else
+                        return BadRequest($"No worker found for the given category!");
+                }
                 else
                 {
-                    List<Category> professions = unit.CategoryReadRepository.GetAll().ToList();
-                    return BadRequest($"The Profession was not found!");
+                    return BadRequest($"The category was not found!");
                 }
             }
             catch (Exception ex)
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("Get All Workers")]
+        public IActionResult Get()
+        {
+            try
+            {
+                List<Worker> workers = unit.WorkerReadRepository.GetAll().ToList();
+                if (workers is not null)
+                    return Ok(workers);
+                else
+                    return BadRequest("Worker does not exists");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

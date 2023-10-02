@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 namespace IUstaFinalProject.Domain.Entities.Dtos
 {
-    public class CustomerDto:UserDto
+    public class AdminDto:UserDto
     {
-        public string Name { get; set; } = string.Empty;
-        public string Surname { get; set; } = string.Empty;
     }
 }
