@@ -7,6 +7,7 @@ using IUstaFinalProject.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.Net;
@@ -20,13 +21,15 @@ namespace IUstaFinalProject.Api.Controllers
         private readonly IUnitOfWork unit;
         private readonly ILoginRegisterService _loginRegister;
         private readonly ILogger<CustomerController> logger;
-        private readonly IMailService mailService;
-        public CustomerController(ILoginRegisterService loginRegister, IUnitOfWork unit, ILogger<CustomerController> logger, IMailService mailService)
+        private readonly IMailService mailService; 
+        private readonly IMemoryCache _memoryCache;
+        public CustomerController(ILoginRegisterService loginRegister, IUnitOfWork unit, ILogger<CustomerController> logger, IMailService mailService, IMemoryCache memoryCache)
         {
             this._loginRegister = loginRegister;
             this.unit = unit;
             this.logger = logger;
             this.mailService = mailService;
+            _memoryCache = memoryCache;
         }
 
         [HttpPost("login")]
@@ -122,10 +125,21 @@ namespace IUstaFinalProject.Api.Controllers
         {
             try
             {
+                if (_memoryCache.TryGetValue("AllWorkers", out IEnumerable<Worker> cachedWorkers))
+                {
+                    return Ok(cachedWorkers);
+                }
                 List<Worker> workers = unit.WorkerReadRepository.GetAll().ToList();
 
                 if (workers != null && workers.Count > 0)
                 {
+                    var cacheEntryOptions = new MemoryCacheEntryOptions
+                    {
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+                    };
+
+                    _memoryCache.Set("AllWorkers", workers, cacheEntryOptions);
+
                     workers = workers.OrderByDescending(w => w.Rating).ToList();
 
                     return Ok(workers);
