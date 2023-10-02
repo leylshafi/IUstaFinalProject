@@ -129,5 +129,34 @@ namespace IUstaFinalProject.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+        [HttpGet("RateWorker")]
+        public async Task<IActionResult> RateWorker(Guid WorkerId, float rating)
+        {
+            try
+            {
+                Worker worker = await unit.WorkerReadRepository.GetSingleAsync(w => w.Id == WorkerId);
+                if (worker == null)
+                {
+                    return BadRequest("Worker does not exist");
+                }
+
+                worker.RatedCustomers += 1;
+                worker.Rating = (worker.Rating + rating) / worker.RatedCustomers; 
+
+                unit.WorkerWriteRepository.Update(worker);
+                await unit.WorkerWriteRepository.SaveAsync();
+
+                return Ok(worker);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while processing your request.");
+            }
+        }
+        
+
     }
 }

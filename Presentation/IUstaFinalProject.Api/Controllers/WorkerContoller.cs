@@ -48,6 +48,7 @@ namespace IUstaFinalProject.Api.Controllers
             try
             {
                 var token = _loginRegister.Login(workerDto,Role.Worker);
+                _logger.LogInformation("Worker logined");
                 return Ok("Successfully Logined!");
             }
             catch (Exception ex)
@@ -63,9 +64,14 @@ namespace IUstaFinalProject.Api.Controllers
         {
             try
             {
-                
-                if (await _loginRegister.Register(workerDto,Role.Worker,categoryId))
+
+                if (await _loginRegister.Register(workerDto, Role.Worker, categoryId))
+                {
+                    _logger.LogInformation("Worker registered");
                     return Ok();
+                }
+
+                
                 throw new Exception("Something went wrong!");
             }
             catch (Exception ex)
