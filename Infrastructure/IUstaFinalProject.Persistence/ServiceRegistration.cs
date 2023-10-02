@@ -49,7 +49,7 @@ namespace IUstaFinalProject.Persistence
 
 
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         }
     }

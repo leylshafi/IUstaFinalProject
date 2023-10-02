@@ -8,6 +8,7 @@ using IUstaFinalProject.Application.Features.Commands.Categories.AddCategory;
 using MediatR;
 using IUstaFinalProject.Application.Repositories;
 using IUstaFinalProject.Application.Features.Commands.Categories.RemoveCategory;
+using IUstaFinalProject.Application.Enums;
 
 namespace IUstaFinalProject.Api.Controllers
 {
@@ -69,6 +70,23 @@ namespace IUstaFinalProject.Api.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError);
             }
         }
+
+        //[HttpGet("GetWorkers")]
+        //public IActionResult Get()
+        //{
+        //    try
+        //    {
+        //        List<Worker> workers = unit.WorkerReadRepository.GetAll().ToList();
+        //        if (workers is not null)
+        //            return Ok(workers);
+        //        else
+        //            return BadRequest("Worker does not exists");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
 
 
         //[HttpGet("statistics")]

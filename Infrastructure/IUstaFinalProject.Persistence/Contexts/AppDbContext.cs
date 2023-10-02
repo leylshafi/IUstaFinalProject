@@ -39,6 +39,9 @@ namespace IUstaFinalProject.Persistence.Contexts
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Admin> Admins { get; set; }
+        public DbSet<Worker> Workers { get; set; }
+        public DbSet<Customer> Customers { get; set; }
 
 
     }

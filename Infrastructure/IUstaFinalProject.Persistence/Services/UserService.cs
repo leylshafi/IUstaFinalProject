@@ -1,5 +1,4 @@
 ﻿using IUstaFinalProject.Application.Abstraction.Services;
-using IUstaFinalProject.Application.Features.Commands.AppUser.CreateUser;
 using IUstaFinalProject.Domain.Entities.Dtos.User;
 using IUstaFinalProject.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -27,7 +26,7 @@ namespace IUstaFinalProject.Persistence.Services
                 Id = Guid.NewGuid().ToString(),
                 UserName = model.Username,
                 Email = model.Email,
-                NameSurname = model.NameSurname,
+                Name = model.NameSurname,
             }, model.Password);
 
             CreateUserResponse response = new() { Succeeded = result.Succeeded };

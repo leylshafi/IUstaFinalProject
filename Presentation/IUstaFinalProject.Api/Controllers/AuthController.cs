@@ -1,6 +1,4 @@
 ﻿using IUstaFinalProject.Application.Abstraction.Services;
-using IUstaFinalProject.Application.Features.Commands.AppUser.LoginUser;
-using IUstaFinalProject.Application.Features.Commands.AppUser.RefreshTokenLogin;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,21 +18,21 @@ namespace IUstaFinalProject.Api.Controllers
             this.mailService = mailService;
             _logger = logger;
         }
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login(LoginUserCommandRequest loginUserCommandRequest)
-        {
-            LoginUserCommandResponse response = await _mediator.Send(loginUserCommandRequest);
-            await mailService.SendMailAsync("llshafi03@gmail.com", "Test", "<h1>This is a test mail</h1>");
-            _logger.LogInformation("Email Sent");
-            return Ok(response);
-        }
+        //[HttpPost("Login")]
+        //public async Task<IActionResult> Login(LoginUserCommandRequest loginUserCommandRequest)
+        //{
+        //    LoginUserCommandResponse response = await _mediator.Send(loginUserCommandRequest);
+        //    await mailService.SendMailAsync("llshafi03@gmail.com", "Test", "<h1>This is a test mail</h1>");
+        //    _logger.LogInformation("Email Sent");
+        //    return Ok(response);
+        //}
 
-        [HttpPost("RefreshTokenLogin")]
-        public async Task<IActionResult> RefreshTokenLogin([FromBody] RefreshTokenLoginCommandRequest refreshTokenLoginCommandRequest)
-        {
-            RefreshTokenLoginCommandResponse response = await _mediator.Send(refreshTokenLoginCommandRequest);
-            return Ok(response);
-        }
+        //[HttpPost("RefreshTokenLogin")]
+        //public async Task<IActionResult> RefreshTokenLogin([FromBody] RefreshTokenLoginCommandRequest refreshTokenLoginCommandRequest)
+        //{
+        //    RefreshTokenLoginCommandResponse response = await _mediator.Send(refreshTokenLoginCommandRequest);
+        //    return Ok(response);
+        //}
 
         //[HttpPost("password-reset")]
         //public async Task<IActionResult> PasswordReset([FromBody] PasswordResetCommandRequest passwordResetCommandRequest)

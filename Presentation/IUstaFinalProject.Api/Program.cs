@@ -9,10 +9,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Context;
 using Serilog.Core;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Text;
 
 
@@ -40,23 +42,20 @@ builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>
     .ConfigureApiBehaviorOptions(o => o.SuppressModelStateInvalidFilter = true);
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API", Version = "v1" });
+
+    // Set the path to your XML documentation file
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+    // Include XML comments in Swagger
+    c.IncludeXmlComments(xmlPath);
+});
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer("Admin", options =>
-    {
-        options.TokenValidationParameters = new()
-        {
-            ValidateAudience = true,
-            ValidateIssuer = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-
-            ValidAudience = builder.Configuration["JWT:Audience"],
-            ValidIssuer = builder.Configuration["JWT:Issuer"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecurityKey"])),
-            LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false
-        };
-    }).AddJwtBearer("Worker", options =>
     {
         options.TokenValidationParameters = new()
         {
