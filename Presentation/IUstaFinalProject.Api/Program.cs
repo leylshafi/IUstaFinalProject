@@ -30,6 +30,7 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
  policy.WithOrigins("https://localhost:7176", "http://localhost:7176").AllowAnyHeader().AllowAnyMethod()
 ));
 
+builder.Services.AddMemoryCache();
 Logger log = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.MSSqlServer(builder.Configuration.GetConnectionString("Default"),"logs").Enrich.FromLogContext()

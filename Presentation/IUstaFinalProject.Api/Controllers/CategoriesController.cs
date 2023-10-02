@@ -4,6 +4,7 @@ using IUstaFinalProject.Domain.Entities.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using System.Net;
 
 namespace IUstaFinalProject.Api.Controllers
@@ -13,11 +14,13 @@ namespace IUstaFinalProject.Api.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly IUnitOfWork unit;
-        private readonly ILogger<CategoriesController> logger;
-        public CategoriesController(IUnitOfWork unit, ILogger<CategoriesController> logger)
+        private readonly ILogger<CategoriesController> logger; 
+        private readonly IMemoryCache _memoryCache;
+        public CategoriesController(IUnitOfWork unit, ILogger<CategoriesController> logger, IMemoryCache memoryCache)
         {
             this.unit = unit;
             this.logger = logger;
+            _memoryCache = memoryCache;
         }
 
         [HttpGet("Get Categories")]
@@ -25,9 +28,22 @@ namespace IUstaFinalProject.Api.Controllers
         {
             try
             {
+                if (_memoryCache.TryGetValue("Categories", out IEnumerable<Category> cachedCategories))
+                {
+                    return Ok(cachedCategories);
+                }
                 List<Category> categories = unit.CategoryReadRepository.GetAll().ToList();
                 if (categories is not null)
+                {
+                    var cacheEntryOptions = new MemoryCacheEntryOptions
+                    {
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+                    };
+
+                    _memoryCache.Set("Categories", categories, cacheEntryOptions);
+
                     return Ok(categories);
+                }
                 else
                     return BadRequest("Category does not exists");
             }

@@ -187,7 +187,7 @@ namespace IUstaFinalProject.Api.Controllers
                 
                 var worker = await unit.WorkerReadRepository.GetSingleAsync(w=>w.Id== WorkerId);
                 var customer = await unit.CustomerReadRepository.GetSingleAsync(w=>w.Id== CustomerId);
-                await mailService.SendMailAsync(worker.Email, $"Agreement with{customer.Name}", AgreementText, true);
+                await mailService.SendMailAsync(worker.Email, $"Agreement with {customer.Name}", AgreementText, true);
 
                 return Ok(agreement);
             }

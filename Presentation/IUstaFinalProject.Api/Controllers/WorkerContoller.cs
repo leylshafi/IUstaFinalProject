@@ -17,12 +17,13 @@ namespace IUstaFinalProject.Api.Controllers
         private readonly IUnitOfWork unit;
         private readonly ILoginRegisterService _loginRegister;
         private readonly ILogger<WorkerController> _logger;
-
-        public WorkerController(IUnitOfWork unit, ILoginRegisterService loginRegister, ILogger<WorkerController> logger)
+        private readonly IMailService mailService;
+        public WorkerController(IUnitOfWork unit, ILoginRegisterService loginRegister, ILogger<WorkerController> logger, IMailService mailService)
         {
             this.unit = unit;
             this._loginRegister = loginRegister;
             _logger = logger;
+            this.mailService = mailService;
         }
 
         [HttpGet("GetWorkers")]

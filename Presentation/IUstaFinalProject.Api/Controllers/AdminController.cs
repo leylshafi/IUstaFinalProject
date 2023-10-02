@@ -10,6 +10,7 @@ using IUstaFinalProject.Application.Repositories;
 using IUstaFinalProject.Application.Features.Commands.Categories.RemoveCategory;
 using IUstaFinalProject.Application.Enums;
 using IUstaFinalProject.Infrastructure.Services;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace IUstaFinalProject.Api.Controllers
 {
@@ -21,11 +22,13 @@ namespace IUstaFinalProject.Api.Controllers
         private readonly IUnitOfWork unit;
         private readonly ILoginRegisterService _loginRegister;
         private readonly ILogger<AdminController> logger;
-        public AdminController(IUnitOfWork unit, ILoginRegisterService loginRegister, ILogger<AdminController> logger)
+        private readonly IMemoryCache _memoryCache;
+        public AdminController(IUnitOfWork unit, ILoginRegisterService loginRegister, ILogger<AdminController> logger, IMemoryCache memoryCache)
         {
             this.unit = unit;
             this._loginRegister = loginRegister;
             this.logger = logger;
+            _memoryCache = memoryCache;
         }
 
         [HttpPost("login")]
@@ -70,8 +73,20 @@ namespace IUstaFinalProject.Api.Controllers
         public IActionResult Get()
         {
             try
-            { 
+            {
+                if (_memoryCache.TryGetValue("Workers", out IEnumerable<Worker> cachedWorkers))
+                {
+                    return Ok(cachedWorkers);
+                }
+
                 List<Worker> workers = unit.WorkerReadRepository.GetAll().ToList();
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) 
+                };
+
+                _memoryCache.Set("Workers", workers, cacheEntryOptions);
 
                 if (workers != null && workers.Count > 0)
                 {
