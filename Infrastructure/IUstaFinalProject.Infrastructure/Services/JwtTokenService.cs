@@ -21,7 +21,7 @@ namespace IUstaFinalProject.Infrastructure.Services
             new Claim(ClaimTypes.Role, user.Role)
         };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("urfbjnedioerbugfenodbgufnwebiuifwonbwfnwbfwbuigebuigbwuifbwof"));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("my most secure security key in the world"));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 

@@ -15,6 +15,7 @@ namespace IUstaFinalProject.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+   
     public class AdminController : ControllerBase
     {
         private readonly IUnitOfWork unit;
@@ -59,6 +60,7 @@ namespace IUstaFinalProject.Api.Controllers
 
 
         [HttpGet("GetWorkers")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Get()
         {
             try

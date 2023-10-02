@@ -1,4 +1,5 @@
 using FluentValidation.AspNetCore;
+using IUstaFinalProject.Api;
 using IUstaFinalProject.Application;
 using IUstaFinalProject.Application.Validators.Agreements;
 using IUstaFinalProject.Domain.Entities.Identity;
@@ -43,7 +44,7 @@ builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>
 
 builder.Services.AddEndpointsApiExplorer();
 
-
+builder.Services.AddSwager();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer("Admin", options =>
@@ -61,6 +62,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false
         };
     });
+
+builder.Services.AddAuthenticationAndAuthorization(builder.Configuration);
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
