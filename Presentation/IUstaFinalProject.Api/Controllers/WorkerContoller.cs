@@ -113,30 +113,5 @@ namespace IUstaFinalProject.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-
-        [HttpDelete("Remove/{id}")]
-        public async Task<IActionResult> Remove(Guid id)
-        {
-            try
-            {
-                var worker = await unit.WorkerReadRepository.GetSingleAsync(p => p.Id == id);
-                if (worker == null)
-                {
-                    return NotFound("The worker not found!");
-                }
-
-                unit.WorkerWriteRepository.Remove(worker);
-
-                await unit.SaveChangesAsync();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                //_logger.LogError($"INNER - - - {ex.InnerException.ToString()}");
-                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while processing your request.");
-            }
-        }
     }
 }

@@ -25,17 +25,22 @@ namespace IUstaFinalProject.Infrastructure.Services
         public async Task<string> Login(UserDto request, Role role)
         {
             var user = new User();
-            if (role==Role.Customer)
+            if (role == Role.Customer)
             {
                 user = _context.Customers.FirstOrDefault(u => u.Username == request.UserName) ??
                 throw new Exception("Username or password is wrong!");
             }
-            else
+            else if(role == Role.Worker)
             {
                 user = _context.Workers.FirstOrDefault(u => u.Username == request.UserName) ??
                 throw new Exception("Username or password is wrong!");
             }
-            
+            else
+            {
+                user = _context.Admins.FirstOrDefault(u => u.Username == request.UserName) ??
+               throw new Exception("Username or password is wrong!");
+            }
+
 
             if (!PasswordHash.ConfirmPasswordHash(request.Password, user.PassHash, user.PassSalt))
                 throw new Exception("Username or password is wrong!");
@@ -68,12 +73,13 @@ namespace IUstaFinalProject.Infrastructure.Services
                     PassSalt = PassSalt,
                     Name = request.Name,
                     Surname = request.Surname,
-                    Role = role.ToString()
+                    Role = role.ToString(),
+                    CreatedDate = DateTime.Now
                 };
 
                 await _context.Customers.AddAsync(customer);
             }
-            else
+            else if (role == Role.Worker)
             {
 
                 if (_context.Workers.Any(u => u.Username == request.UserName))
@@ -88,21 +94,33 @@ namespace IUstaFinalProject.Infrastructure.Services
                     Name = request.Name,
                     Surname = request.Surname,
                     CategoryId = Guid.Parse(categoryId),
-                    Role = role.ToString()
+                    Role = role.ToString(),
+                    CreatedDate = DateTime.Now
                 };
                 await _context.Workers.AddAsync(worker);
 
             }
-            try
+            else
             {
-                await _context.SaveChangesAsync();
+                if (_context.Admins.Any(u => u.Username == request.UserName))
+                    throw new Exception($"{request.UserName} Admin is already created!");
+
+                Admin admin = new()
+                {
+                    Id = Guid.NewGuid(),
+                    Username = request.UserName,
+                    PassHash = PassHash,
+                    PassSalt = PassSalt,
+                    Name = request.Name,
+                    Surname = request.Surname,
+                    Role = role.ToString(),
+                    CreatedDate= DateTime.Now,
+                };
+                await _context.Admins.AddAsync(admin);
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.InnerException.ToString());
-                throw;
-            }
-            
+            await _context.SaveChangesAsync();
+
+
             return true;
         }
     }

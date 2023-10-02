@@ -9,108 +9,95 @@ using MediatR;
 using IUstaFinalProject.Application.Repositories;
 using IUstaFinalProject.Application.Features.Commands.Categories.RemoveCategory;
 using IUstaFinalProject.Application.Enums;
+using IUstaFinalProject.Infrastructure.Services;
 
 namespace IUstaFinalProject.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes ="Admin")]
     public class AdminController : ControllerBase
     {
-        private readonly ICategoryReadRepository productReadRepository;
-        private readonly ICategoryWriteRepository productWriteRepository;
+        private readonly IUnitOfWork unit;
+        private readonly ILoginRegisterService _loginRegister;
 
-        private readonly IMediator mediator;
-        private readonly ILogger<AdminController> logger;
-
-        public AdminController(ICategoryReadRepository productReadRepository, ICategoryWriteRepository productWriteRepository, IMediator mediator, ILogger<AdminController> logger)
+        public AdminController(IUnitOfWork unit, ILoginRegisterService loginRegister)
         {
-            this.productReadRepository = productReadRepository;
-            this.productWriteRepository = productWriteRepository;
-            this.mediator = mediator;
-            this.logger = logger;
+            this.unit = unit;
+            this._loginRegister = loginRegister;
         }
 
-
-        [HttpPost("add category")]
-        public async Task<IActionResult> Add([FromBody] AddCategoryCommandRequest request)
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] UserDto admin)
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    await mediator.Send(request);
-                    return StatusCode((int)HttpStatusCode.Created);
-                }
-                return BadRequest(ModelState);
+                var token = _loginRegister.Login(admin, Role.Admin);
+                return Ok(token);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
-                return StatusCode((int)HttpStatusCode.InternalServerError);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
+
         }
 
-
-        [HttpPost("remove")]
-        public async Task<IActionResult> Remove([FromBody] RemoveCategoryCommandRequest request)
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterDto admin)
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    await mediator.Send(request);
-                    return StatusCode((int)HttpStatusCode.Created);
-                }
-                return BadRequest(ModelState);
+                if (await _loginRegister.Register(admin, Role.Admin, null))
+                    return Ok();
+                throw new Exception("Something went wrong!");
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
-                return StatusCode((int)HttpStatusCode.InternalServerError);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+
+        }
+
+
+        [HttpGet("GetWorkers")]
+        public IActionResult Get()
+        {
+            try
+            {
+                List<Worker> workers = unit.WorkerReadRepository.GetAll().ToList();
+                if (workers is not null)
+                    return Ok(workers);
+                else
+                    return BadRequest("Worker does not exists");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 
-        //[HttpGet("GetWorkers")]
-        //public IActionResult Get()
-        //{
-        //    try
-        //    {
-        //        List<Worker> workers = unit.WorkerReadRepository.GetAll().ToList();
-        //        if (workers is not null)
-        //            return Ok(workers);
-        //        else
-        //            return BadRequest("Worker does not exists");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
 
+        [HttpGet("statistics")]
+        public IActionResult GetStatistics()
+        {
+            try
+            {
+                var customerCount = unit.CustomerReadRepository.GetAll().Count();
+                var workerCount = unit.WorkerReadRepository.GetAll().Count();
+                var categoryCount = unit.CategoryReadRepository.GetAll().Count();
 
-        //[HttpGet("statistics")]
-        //public IActionResult GetStatistics()
-        //{
-        //    try
-        //    {
-        //        var customerCount = workerDbContext.Customers.Count();
-        //        var workerCount = workerDbContext.Workers.Count();
-        //        var categoryCount = workerDbContext.Categories.Count();
+                var statistics = new
+                {
+                    CustomerCount = customerCount,
+                    WorkerCount = workerCount,
+                    CategoryCount = categoryCount
+                };
 
-        //        var statistics = new
-        //        {
-        //            CustomerCount = customerCount,
-        //            WorkerCount = workerCount,
-        //            CategoryCount = categoryCount
-        //        };
-
-        //        return Ok(statistics);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
-        //    }
-        //}
+                return Ok(statistics);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
     }
 }
