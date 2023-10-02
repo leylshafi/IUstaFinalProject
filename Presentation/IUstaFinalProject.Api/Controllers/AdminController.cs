@@ -70,17 +70,24 @@ namespace IUstaFinalProject.Api.Controllers
         public IActionResult Get()
         {
             try
-            {
+            { 
                 List<Worker> workers = unit.WorkerReadRepository.GetAll().ToList();
-                if (workers is not null)
+
+                if (workers != null && workers.Count > 0)
+                {
+                    workers = workers.OrderByDescending(w => w.Rating).ToList();
+
                     return Ok(workers);
+                }
                 else
-                    return BadRequest("Worker does not exists");
+                {
+                    return BadRequest("No workers found.");
+                }
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while processing your request.");
             }
         }
 
