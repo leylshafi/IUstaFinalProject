@@ -23,7 +23,7 @@ namespace IUstaFinalProject.Api.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] CustomerDto customer)
+        public IActionResult Login([FromBody] UserDto customer)
         {
             try
             {

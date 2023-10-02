@@ -25,9 +25,9 @@ builder.Services.AddInfrastructureServices();
 builder.Services.AddPersistenceService();
 
 
-builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
- policy.WithOrigins("https://localhost:7176", "http://localhost:7176").AllowAnyHeader().AllowAnyMethod()
-));
+//builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
+// policy.WithOrigins("https://localhost:7176", "http://localhost:7176").AllowAnyHeader().AllowAnyMethod()
+//));
 
 Logger log = new LoggerConfiguration()
     .WriteTo.Console()

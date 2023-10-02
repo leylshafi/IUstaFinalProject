@@ -24,8 +24,18 @@ namespace IUstaFinalProject.Infrastructure.Services
         }
         public async Task<string> Login(UserDto request, Role role)
         {
-            var user = _context.Customers.FirstOrDefault(u => u.Username == request.UserName) ??
+            var user = new User();
+            if (role==Role.Customer)
+            {
+                user = _context.Customers.FirstOrDefault(u => u.Username == request.UserName) ??
                 throw new Exception("Username or password is wrong!");
+            }
+            else
+            {
+                user = _context.Workers.FirstOrDefault(u => u.Username == request.UserName) ??
+                throw new Exception("Username or password is wrong!");
+            }
+            
 
             if (!PasswordHash.ConfirmPasswordHash(request.Password, user.PassHash, user.PassSalt))
                 throw new Exception("Username or password is wrong!");

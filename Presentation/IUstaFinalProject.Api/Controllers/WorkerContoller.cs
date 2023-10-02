@@ -15,11 +15,13 @@ namespace IUstaFinalProject.Api.Controllers
     {
         private readonly IUnitOfWork unit;
         private readonly ILoginRegisterService _loginRegister;
+        private readonly ILogger<WorkerController> _logger;
 
-        public WorkerController(IUnitOfWork unit, ILoginRegisterService loginRegister)
+        public WorkerController(IUnitOfWork unit, ILoginRegisterService loginRegister, ILogger<WorkerController> logger)
         {
             this.unit = unit;
             this._loginRegister = loginRegister;
+            _logger = logger;
         }
 
         [HttpGet("GetWorkers")]
@@ -40,7 +42,7 @@ namespace IUstaFinalProject.Api.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] WorkerDto workerDto)
+        public IActionResult Login([FromBody] UserDto workerDto)
         {
             try
             {
@@ -112,47 +114,29 @@ namespace IUstaFinalProject.Api.Controllers
             }
         }
 
-        //[HttpPut("UpdateProfessionByName")]
-        //public async Task<IActionResult> Update([FromBody] WorkerDTO workerDTO, string getWorker)
-        //{
-        //    try
-        //    {
-        //        var worker = unit.WorkerReadRepository.Get(p => p.Name == workerDTO.Name);
-        //        if (worker == null)
-        //            return NotFound();
 
-        //        worker.Name = workerDTO.Name;
-        //        worker.Profession.Name = workerDTO.Profession;
+        [HttpDelete("Remove/{id}")]
+        public async Task<IActionResult> Remove(Guid id)
+        {
+            try
+            {
+                var worker = await unit.WorkerReadRepository.GetSingleAsync(p => p.Id == id);
+                if (worker == null)
+                {
+                    return NotFound("The worker not found!");
+                }
 
-        //        unit.WorkerWriteRepository.Update(worker);
-        //        await unit.SaveChangesAsync();
+                unit.WorkerWriteRepository.Remove(worker);
 
-        //        return Ok(worker);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
-        //    }
-        //}
+                await unit.SaveChangesAsync();
 
-        //[HttpDelete("Remove")]
-        //public async Task<IActionResult> Remove([FromBody] WorkerDTO workerDTO)
-        //{
-        //    try
-        //    {
-        //        var worker = unit.WorkerReadRepository.Get(p => p.Name == workerDTO.Name);
-        //        if (worker == null)
-        //            return NotFound("The worker not found!");
-
-        //        unit.WorkerWriteRepository.Remove(worker);
-        //        await unit.SaveChangesAsync();
-
-        //        return Ok();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
-        //    }
-        //}
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError($"INNER - - - {ex.InnerException.ToString()}");
+                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while processing your request.");
+            }
+        }
     }
 }
