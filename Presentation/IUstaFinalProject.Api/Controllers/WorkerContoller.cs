@@ -123,5 +123,30 @@ namespace IUstaFinalProject.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("Agreement with customer")]
+        public async Task<IActionResult> AgreementWithWorker(Guid WorkerId, Guid CustomerId, string AgreementText)
+        {
+            try
+            {
+                Agreement agreement = new()
+                {
+                    Id = Guid.NewGuid(),
+                    CreatedDate = DateTime.Now,
+                    CustomerId = CustomerId,
+                    WorkerId = WorkerId,
+                    AgreementText = AgreementText
+                };
+                await unit.AgreementWriteRepository.AddAsync(agreement);
+                await unit.AgreementWriteRepository.SaveAsync();
+
+                return Ok(agreement);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while processing your request.");
+            }
+        }
     }
 }
