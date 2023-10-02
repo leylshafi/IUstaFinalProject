@@ -16,10 +16,12 @@ namespace IUstaFinalProject.Api.Controllers
     {
         private readonly IUnitOfWork unit;
         private readonly ILoginRegisterService _loginRegister;
-        public CustomerController(ILoginRegisterService loginRegister, IUnitOfWork unit)
+        private readonly ILogger<CustomerController> logger;
+        public CustomerController(ILoginRegisterService loginRegister, IUnitOfWork unit, ILogger<CustomerController> logger)
         {
             this._loginRegister = loginRegister;
             this.unit = unit;
+            this.logger = logger;
         }
 
         [HttpPost("login")]
@@ -28,10 +30,12 @@ namespace IUstaFinalProject.Api.Controllers
             try
             {
                 var token = _loginRegister.Login(customer,Role.Customer);
+                logger.LogInformation("Customer logined");
                 return Ok(token);
             }
             catch (Exception ex)
             {
+                logger.LogError(ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
 
@@ -44,10 +48,13 @@ namespace IUstaFinalProject.Api.Controllers
             {
                 if (await _loginRegister.Register(customer,Role.Customer,null))
                     return Ok();
+
+                logger.LogInformation("Customer registered");
                 throw new Exception("Something went wrong!");
             }
             catch (Exception ex)
             {
+                logger.LogError(ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
 
@@ -72,6 +79,7 @@ namespace IUstaFinalProject.Api.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError(ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
@@ -99,6 +107,7 @@ namespace IUstaFinalProject.Api.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError(ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
@@ -116,6 +125,7 @@ namespace IUstaFinalProject.Api.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError(ex.Message);
                 return BadRequest(ex.Message);
             }
         }

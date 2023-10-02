@@ -37,6 +37,7 @@ namespace IUstaFinalProject.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -51,6 +52,7 @@ namespace IUstaFinalProject.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return BadRequest(ex.Message);
             }
 
@@ -68,6 +70,7 @@ namespace IUstaFinalProject.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return BadRequest(ex.Message);
             }
 
@@ -92,6 +95,7 @@ namespace IUstaFinalProject.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }

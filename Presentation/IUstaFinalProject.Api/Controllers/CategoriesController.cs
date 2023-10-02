@@ -13,10 +13,11 @@ namespace IUstaFinalProject.Api.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly IUnitOfWork unit;
-
-        public CategoriesController(IUnitOfWork unit)
+        private readonly ILogger<CategoriesController> logger;
+        public CategoriesController(IUnitOfWork unit, ILogger<CategoriesController> logger)
         {
             this.unit = unit;
+            this.logger = logger;
         }
 
         [HttpGet("Get Categories")]
@@ -32,11 +33,13 @@ namespace IUstaFinalProject.Api.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError(ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
         [HttpPost("Add Category")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Add([FromBody] CategoryDto categoryDto)
         {
             try
@@ -58,11 +61,13 @@ namespace IUstaFinalProject.Api.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError(ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
         [HttpPut("UpdateCategoryByName")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update([FromBody] CategoryDto categoryDto, string newName)
         {
             try
@@ -80,11 +85,13 @@ namespace IUstaFinalProject.Api.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError(ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
-        [HttpDelete("DeleteProfessionByName")]
+        [HttpDelete("DeleteCategoryByName")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromBody] CategoryDto categoryDto)
         {
             try
@@ -100,6 +107,7 @@ namespace IUstaFinalProject.Api.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError(ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
