@@ -1,20 +1,11 @@
-﻿using IUstaFinalProject.Application.Abstraction.Services;
-using IUstaFinalProject.Application.Repositories;
+﻿using IUstaFinalProject.Application.Repositories;
 using IUstaFinalProject.Domain.Entities.Identity;
 using IUstaFinalProject.Persistence.Contexts;
 using IUstaFinalProject.Persistence.Repositories;
-using IUstaFinalProject.Persistence.Services;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IUstaFinalProject.Persistence
 {
@@ -48,7 +39,6 @@ namespace IUstaFinalProject.Persistence
             services.AddScoped<IReviewWriteRepository, ReviewWriteRepository>();
 
 
-            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         }

@@ -1,23 +1,16 @@
 ﻿using IUstaFinalProject.Domain.Entities.Dtos;
 using IUstaFinalProject.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using IUstaFinalProject.Persistence.Contexts;
-using Azure.Core;
-using MediatR;
 using IUstaFinalProject.Domain.Entities.Identity;
 using IUstaFinalProject.Application.Enums;
-using System.Net.Http.Headers;
 
 namespace IUstaFinalProject.Infrastructure.Services
 {
     public class LoginRegisterService : ILoginRegisterService
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<User> _userManager;
         public LoginRegisterService(AppDbContext context)
         {
             this._context = context;
@@ -77,7 +70,6 @@ namespace IUstaFinalProject.Infrastructure.Services
                     CreatedDate = DateTime.Now,
                     Email= request.Email,
                 };
-
                 await _context.Customers.AddAsync(customer);
             }
             else if (role == Role.Worker)

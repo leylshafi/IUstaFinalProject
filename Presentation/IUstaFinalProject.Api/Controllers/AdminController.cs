@@ -1,13 +1,9 @@
 ﻿using IUstaFinalProject.Domain.Entities.Dtos;
 using IUstaFinalProject.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using IUstaFinalProject.Application.Features.Commands.Categories.AddCategory;
-using MediatR;
 using IUstaFinalProject.Application.Repositories;
-using IUstaFinalProject.Application.Features.Commands.Categories.RemoveCategory;
 using IUstaFinalProject.Application.Enums;
 using IUstaFinalProject.Infrastructure.Services;
 using Microsoft.Extensions.Caching.Memory;

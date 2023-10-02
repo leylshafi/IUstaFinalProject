@@ -1,5 +1,4 @@
 ﻿using IUstaFinalProject.Application.Abstraction.Services;
-using IUstaFinalProject.Application.Abstraction.Token;
 using IUstaFinalProject.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;

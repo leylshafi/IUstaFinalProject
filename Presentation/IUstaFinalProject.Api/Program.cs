@@ -1,21 +1,11 @@
-using FluentValidation.AspNetCore;
 using IUstaFinalProject.Api;
 using IUstaFinalProject.Application;
-using IUstaFinalProject.Application.Validators.Agreements;
-using IUstaFinalProject.Domain.Entities.Identity;
 using IUstaFinalProject.Infrastructure;
-using IUstaFinalProject.Infrastructure.Filters;
 using IUstaFinalProject.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Serilog;
-using Serilog.Context;
 using Serilog.Core;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using System.Text;
 
 
@@ -39,9 +29,7 @@ Logger log = new LoggerConfiguration()
 
 builder.Host.UseSerilog(log);
 
-builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>())
-    .AddFluentValidation(config => config.RegisterValidatorsFromAssemblyContaining<AgreementDtoValidator>())
-    .ConfigureApiBehaviorOptions(o => o.SuppressModelStateInvalidFilter = true);
+builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 
