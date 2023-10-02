@@ -79,6 +79,7 @@ namespace IUstaFinalProject.Api.Controllers
 
 
         [HttpGet("statistics")]
+        [Authorize(Roles = "Admin")]
         public IActionResult GetStatistics()
         {
             try
