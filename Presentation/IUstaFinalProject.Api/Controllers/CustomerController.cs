@@ -1,4 +1,5 @@
-﻿using IUstaFinalProject.Application.Enums;
+﻿using IUstaFinalProject.Application.Abstraction.Services;
+using IUstaFinalProject.Application.Enums;
 using IUstaFinalProject.Application.Repositories;
 using IUstaFinalProject.Domain.Entities;
 using IUstaFinalProject.Domain.Entities.Dtos;
@@ -19,11 +20,13 @@ namespace IUstaFinalProject.Api.Controllers
         private readonly IUnitOfWork unit;
         private readonly ILoginRegisterService _loginRegister;
         private readonly ILogger<CustomerController> logger;
-        public CustomerController(ILoginRegisterService loginRegister, IUnitOfWork unit, ILogger<CustomerController> logger)
+        private readonly IMailService mailService;
+        public CustomerController(ILoginRegisterService loginRegister, IUnitOfWork unit, ILogger<CustomerController> logger, IMailService mailService)
         {
             this._loginRegister = loginRegister;
             this.unit = unit;
             this.logger = logger;
+            this.mailService = mailService;
         }
 
         [HttpPost("login")]
@@ -181,6 +184,10 @@ namespace IUstaFinalProject.Api.Controllers
                 };
                 await unit.AgreementWriteRepository.AddAsync(agreement);
                 await unit.AgreementWriteRepository.SaveAsync();
+                
+                var worker = await unit.WorkerReadRepository.GetSingleAsync(w=>w.Id== WorkerId);
+                var customer = await unit.CustomerReadRepository.GetSingleAsync(w=>w.Id== CustomerId);
+                await mailService.SendMailAsync(worker.Email, $"Agreement with{customer.Name}", AgreementText, true);
 
                 return Ok(agreement);
             }

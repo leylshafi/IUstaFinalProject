@@ -1,4 +1,5 @@
-﻿using IUstaFinalProject.Application.Enums;
+﻿using IUstaFinalProject.Application.Abstraction.Services;
+using IUstaFinalProject.Application.Enums;
 using IUstaFinalProject.Application.Repositories;
 using IUstaFinalProject.Domain.Entities;
 using IUstaFinalProject.Domain.Entities.Dtos;
@@ -139,6 +140,10 @@ namespace IUstaFinalProject.Api.Controllers
                 };
                 await unit.AgreementWriteRepository.AddAsync(agreement);
                 await unit.AgreementWriteRepository.SaveAsync();
+
+                var worker = await unit.WorkerReadRepository.GetSingleAsync(w => w.Id == WorkerId);
+                var customer = await unit.CustomerReadRepository.GetSingleAsync(w => w.Id == CustomerId);
+                await mailService.SendMailAsync(customer.Email, $"Agreement with {worker.Name}", AgreementText, true);
 
                 return Ok(agreement);
             }

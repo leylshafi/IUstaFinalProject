@@ -39,7 +39,6 @@ namespace IUstaFinalProject.Api.Controllers
         }
 
         [HttpPost("Add Category")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Add([FromBody] CategoryDto categoryDto)
         {
             try

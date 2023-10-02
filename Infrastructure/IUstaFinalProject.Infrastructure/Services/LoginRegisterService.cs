@@ -74,7 +74,8 @@ namespace IUstaFinalProject.Infrastructure.Services
                     Name = request.Name,
                     Surname = request.Surname,
                     Role = role.ToString(),
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    Email= request.Email,
                 };
 
                 await _context.Customers.AddAsync(customer);
@@ -95,7 +96,8 @@ namespace IUstaFinalProject.Infrastructure.Services
                     Surname = request.Surname,
                     CategoryId = Guid.Parse(categoryId),
                     Role = role.ToString(),
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    Email = request.Email,
                 };
                 await _context.Workers.AddAsync(worker);
 
@@ -115,6 +117,7 @@ namespace IUstaFinalProject.Infrastructure.Services
                     Surname = request.Surname,
                     Role = role.ToString(),
                     CreatedDate= DateTime.Now,
+                    Email = request.Email,
                 };
                 await _context.Admins.AddAsync(admin);
             }
